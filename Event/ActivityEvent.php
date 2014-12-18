@@ -43,53 +43,61 @@ class ActivityEvent extends Event
      * Creates a new instance and populates with the data collected from the action: bundle,
      * controller, action, route, IP address, ...
      * 
-     * @param Controller $container
+     * @param Controller|array $container Controller when called from a Controller, an array(Controller, Doctrine) when called from a service
      * @param integer $entityId
      * @param string $message
      * @param integer $level
      */
     public function __construct($container, $entityId=null, $message=null, $level=ActivityEvent::LEVEL_INFO) {
-        // initializes container
-        $this->container = $container;
-        $this->em = $container->getDoctrine()->getManager();
+        // if $container is array, it's formed by Controller and Doctrine
+        if (is_array($container)) {
+            $this->container = $container[0];
+            $this->em = $container[1]->getManager();
+        } else {
+            $this->container = $container;
+            $this->em = $container->getDoctrine()->getManager();
+        }
+        
         // fill event with data
         $this->createdAt = new \DateTime();
         $this->message = $message;
         $this->level = $level;
-        $this->ipAddress = $this->container->get('request')->getClientIp();
-        if ($this->container->getUser() !== null) {
-            $this->userId = $this->container->getUser()->getId();
+        if ($this->container !== null) {
+            $this->ipAddress = $this->container->get('request')->getClientIp();
+            
+            if (method_exists($this->container, 'getUser')) {
+                if ($this->container->getUser() !== null) {
+                    $this->userId = $this->container->getUser()->getId();
+                }
+            }
+            $this->route = $this->container->get('request')->get('_route');
+            $request = $this->container->get('request');
+            //dump($request); exit;
+            if ($request !== null) {
+                $this->requestMethod = $request->getMethod();
+                $this->requestUri = $request->getRequestUri();
+                // build request data (form content)
+                $serializer = \JMS\Serializer\SerializerBuilder::create()->build();
+                $jsonContent = $serializer->serialize($request->request, 'json');
+                $this->requestData = $jsonContent;
+                $attributes = $request->attributes;
+                $fullControllerName = $attributes->get('_controller');  // string like "Openview\DiseaseBundle\Controller\CenterController::createAction"
+                $pieces = explode('\\', $fullControllerName);
+                if (array_key_exists(0, $pieces)) {
+                    $this->bundleName = $pieces[0];
+                }
+                if (array_key_exists(1, $pieces)) {
+                    $this->bundleName .= '\\' . $pieces[1];
+                }
+                $otherPieces = explode('::', $pieces[count($pieces)-1]);
+                if (count($otherPieces) == 2) {
+                    $this->controllerName = $otherPieces[0];
+                    $this->actionName = $otherPieces[1];
+                }
+            }
+            $this->entityId = $entityId;
+            //dump($this); exit;
         }
-        $this->route = $this->container->get('request')->get('_route');
-        $template = $this->container->getRequest()->attributes->get('_template');
-        // template can be a string or an object
-        if (is_string($template)) {
-            $attributes = $this->container->getRequest()->attributes;
-            $fullControllerName = $attributes->get('_controller');  // string like "Openview\DiseaseBundle\Controller\CenterController::createAction"
-            $pieces = explode('\\', $fullControllerName);
-            if (array_key_exists(0, $pieces)) {
-                $this->bundleName = $pieces[0];
-            }
-            if (array_key_exists(1, $pieces)) {
-                $this->bundleName .= '\\' . $pieces[1];
-            }
-            $otherPieces = explode('::', $pieces[count($pieces)-1]);
-            if (count($otherPieces) == 2) {
-                $this->controllerName = $otherPieces[0];
-                $this->actionName = $otherPieces[1];
-            }
-        } else {
-            $this->bundleName = $template->get('bundle');
-            $this->controllerName = $template->get('controller');
-            $this->actionName = $_template->get('name');
-        }
-        $this->entityId = $entityId;
-        $this->requestMethod = $this->container->getRequest()->getMethod();
-        $this->requestUri = $this->container->getRequest()->getRequestUri();
-        // build request data (form content)
-        $serializer = \JMS\Serializer\SerializerBuilder::create()->build();
-        $jsonContent = $serializer->serialize($this->container->getRequest()->request, 'json');
-        $this->requestData = $jsonContent;
     }
     
     
