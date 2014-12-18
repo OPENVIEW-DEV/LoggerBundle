@@ -66,6 +66,18 @@ class ActivityLog
      * @ORM\Column(type="string", nullable=true)
      */
     protected $tag;
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $requestMethod;
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $requestUri;
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $requestData;
 
     
     
@@ -87,6 +99,9 @@ class ActivityLog
         $this->message = $event->getMessage();
         $this->extraData = $event->getExtraData();
         $this->tag = $event->getTag();
+        $this->requestMethod = $event->getRequestMethod();
+        $this->requestUri = $event->getRequestUri();
+        $this->requestData = $event->getRequestData();
     }
     
 
@@ -192,6 +207,30 @@ class ActivityLog
 
     function setTag($tag) {
         $this->tag = $tag;
+    }
+    
+    function getRequestMethod() {
+        return $this->requestMethod;
+    }
+
+    function getRequestUri() {
+        return $this->requestUri;
+    }
+
+    function getRequestData() {
+        return $this->requestData;
+    }
+
+    function setRequestMethod($requestMethod) {
+        $this->requestMethod = $requestMethod;
+    }
+
+    function setRequestUri($requestUri) {
+        $this->requestUri = $requestUri;
+    }
+
+    function setRequestData($requestData) {
+        $this->requestData = $requestData;
     }
 
 

@@ -14,6 +14,9 @@ The following info are stored:
 - message: your text message
 - extraData: some extra data. use setExtraData() method to set it
 - tag: a custom tag
+- requestMethod: request method (auto-generated)
+- requestUri: request full URI (auto-generated)
+- requestData: request data serialization (auto-generated) (*beware, for now a file is serialized too*, could be huge)
 
 
 ## Installation

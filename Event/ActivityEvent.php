@@ -34,6 +34,9 @@ class ActivityEvent extends Event
     protected $message;
     protected $extraData;
     protected $tag;
+    protected $requestMethod;
+    protected $requestUri;
+    protected $requestData;
     
     
     /**
@@ -45,12 +48,12 @@ class ActivityEvent extends Event
      * @param string $message
      * @param integer $level
      */
-    public function __construct($container, $entityId=null, $message='', $level=ActivityEvent::LEVEL_INFO) {
-        //parent::__construct();
-        $this->createdAt = new \DateTime();
+    public function __construct($container, $entityId=null, $message=null, $level=ActivityEvent::LEVEL_INFO) {
+        // initializes container
         $this->container = $container;
         $this->em = $container->getDoctrine()->getManager();
-        
+        // fill event with data
+        $this->createdAt = new \DateTime();
         $this->message = $message;
         $this->level = $level;
         $this->ipAddress = $this->container->get('request')->getClientIp();
@@ -59,7 +62,7 @@ class ActivityEvent extends Event
         }
         $this->route = $this->container->get('request')->get('_route');
         $template = $this->container->getRequest()->attributes->get('_template');
-        // template può essere un oggetto oppure una stringa
+        // template can be a string or an object
         if (is_string($template)) {
             $attributes = $this->container->getRequest()->attributes;
             $fullControllerName = $attributes->get('_controller');  // string like "Openview\DiseaseBundle\Controller\CenterController::createAction"
@@ -81,7 +84,12 @@ class ActivityEvent extends Event
             $this->actionName = $_template->get('name');
         }
         $this->entityId = $entityId;
-        $this->tag = '';
+        $this->requestMethod = $this->container->getRequest()->getMethod();
+        $this->requestUri = $this->container->getRequest()->getRequestUri();
+        // build request data (form content)
+        $serializer = \JMS\Serializer\SerializerBuilder::create()->build();
+        $jsonContent = $serializer->serialize($this->container->getRequest()->request, 'json');
+        $this->requestData = $jsonContent;
     }
     
     
@@ -189,6 +197,34 @@ class ActivityEvent extends Event
     function setTag($tag) {
         $this->tag = $tag;
     }
+    
+    function getRequestMethod() {
+        return $this->requestMethod;
+    }
+
+    function getRequestUri() {
+        return $this->requestUri;
+    }
+
+    function getRequestData() {
+        return $this->requestData;
+    }
+
+    function setRequestMethod($requestMethod) {
+        $this->requestMethod = $requestMethod;
+    }
+
+    function setRequestUri($requestUri) {
+        $this->requestUri = $requestUri;
+    }
+
+    function setRequestData($requestData) {
+        $this->requestData = $requestData;
+    }
+
+
+
+
 
 
 
