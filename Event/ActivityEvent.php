@@ -45,6 +45,7 @@ class ActivityEvent extends Event
      * @param integer $level
      */
     public function __construct($container, $entityId=null, $message='', $level=ActivityEvent::LEVEL_INFO) {
+        //parent::__construct();
         $this->createdAt = new \DateTime();
         $this->container = $container;
         $this->em = $container->getDoctrine()->getManager();
@@ -56,9 +57,28 @@ class ActivityEvent extends Event
             $this->userId = $this->container->getUser()->getId();
         }
         $this->route = $this->container->get('request')->get('_route');
-        $this->bundleName = $this->container->getRequest()->attributes->get('_template')->get('bundle');
-        $this->controllerName = $this->container->getRequest()->attributes->get('_template')->get('controller');
-        $this->actionName = $this->container->getRequest()->attributes->get('_template')->get('name');
+        $template = $this->container->getRequest()->attributes->get('_template');
+        // template può essere un oggetto oppure una stringa
+        if (is_string($template)) {
+            $attributes = $this->container->getRequest()->attributes;
+            $fullControllerName = $attributes->get('_controller');  // string like "Openview\DiseaseBundle\Controller\CenterController::createAction"
+            $pieces = explode('\\', $fullControllerName);
+            if (array_key_exists(0, $pieces)) {
+                $this->bundleName = $pieces[0];
+            }
+            if (array_key_exists(1, $pieces)) {
+                $this->bundleName .= '\\' . $pieces[1];
+            }
+            $otherPieces = explode('::', $pieces[count($pieces)-1]);
+            if (count($otherPieces) == 2) {
+                $this->controllerName = $otherPieces[0];
+                $this->actionName = $otherPieces[1];
+            }
+        } else {
+            $this->bundleName = $template->get('bundle');
+            $this->controllerName = $template->get('controller');
+            $this->actionName = $_template->get('name');
+        }
         $this->entityId = $entityId;
     }
     
