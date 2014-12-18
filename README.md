@@ -20,7 +20,11 @@ The following info are stored:
 Install with composer:
 
     # composer.json
-    "openview/logger-bundle": "@stable"
+    "openview/logger-bundle": "~1.0"
+
+Update doctrine schema:
+
+    php app/console doctrine:schema:update --force
 
 Import bundle's services.yml:
 
