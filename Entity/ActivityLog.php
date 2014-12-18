@@ -62,6 +62,10 @@ class ActivityLog
      * @ORM\Column(type="text", nullable=true)
      */
     protected $extraData;
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $tag;
 
     
     
@@ -82,6 +86,7 @@ class ActivityLog
         $this->entityId = $event->getEntityId();
         $this->message = $event->getMessage();
         $this->extraData = $event->getExtraData();
+        $this->tag = $event->getTag();
     }
     
 
@@ -180,14 +185,14 @@ class ActivityLog
     function setControllerName($controllerName) {
         $this->controllerName = $controllerName;
     }
-
-
-
-
-
     
+    function getTag() {
+        return $this->tag;
+    }
 
-
+    function setTag($tag) {
+        $this->tag = $tag;
+    }
 
 
 }

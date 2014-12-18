@@ -33,6 +33,7 @@ class ActivityEvent extends Event
     protected $entityId;
     protected $message;
     protected $extraData;
+    protected $tag;
     
     
     /**
@@ -80,6 +81,7 @@ class ActivityEvent extends Event
             $this->actionName = $_template->get('name');
         }
         $this->entityId = $entityId;
+        $this->tag = '';
     }
     
     
@@ -179,6 +181,16 @@ class ActivityEvent extends Event
     function setControllerName($controllerName) {
         $this->controllerName = $controllerName;
     }
+    
+    function getTag() {
+        return $this->tag;
+    }
+
+    function setTag($tag) {
+        $this->tag = $tag;
+    }
+
+
 
 
 

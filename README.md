@@ -2,7 +2,7 @@
 Bundle to log on a database table application's activities
 
 The following info are stored:
-- createdAt: event time
+- createdAt: event time (auto-generated)
 - level: log level
 - ipAddress: origin IPv4 address (auto-generated)
 - userId: logged user id (auto-generated, NULL if no user is logged)
@@ -13,6 +13,7 @@ The following info are stored:
 - entityId: entity involved in the action
 - message: your text message
 - extraData: some extra data. use setExtraData() method to set it
+- tag: a custom tag
 
 
 ## Installation
