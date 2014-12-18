@@ -80,7 +80,7 @@ $entityId: the entity involved in the action. Not linked with any foreign key, j
 $message: a message you could want to add
 $level: log level
 
-### Log Livels
+### Log Levels
 
 Log levels usage are up to you. If not set, default log level is INFO
 
