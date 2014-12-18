@@ -1,0 +1,22 @@
+{
+    "name": "openview/logger-bundle",
+    "type": "symfony-bundle",
+    "title": "Logger Bundle",
+    "description": "Symfony2 application activity log into Doctrine database",
+    "version": "0.1",
+    "author": {
+        "name": "Openview",
+        "url": "http://www.openview.it"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/OPENVIEW-DEV/LoggerBundle.git"
+    },        
+    "require": {
+        "php": ">=5.3.3"
+    },
+    "autoload": {
+        "psr-0": { "Openview\\LoggerBundle": "" }
+    },
+    "target-dir": "Openview/LoggerBundle"
+}

@@ -1,0 +1,5 @@
+services:
+    kernel.listener.ov_logger:
+        class: Openview\LoggerBundle\Listener\ActivityListener
+        tags: 
+            - { name: kernel.event_listener, event: ov_logger.logactivity, method: onActivityEvent }
