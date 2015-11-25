@@ -24,7 +24,16 @@ The following info are stored:
 Install with composer:
 
     # composer.json
-    "openview/logger-bundle": "~1.0"
+    "openview/logger-bundle": "~1.3@dev"
+    
+Activate the bundle in AppKernel.php
+
+    #AppKernel.php
+    public function registerBundles()
+    {
+        $bundles = array(
+            ...
+            new Openview\LoggerBundle\OpenviewLoggerBundle(),
 
 Update doctrine schema:
 
@@ -32,7 +41,7 @@ Update doctrine schema:
 
 Import bundle's services.yml:
 
-    #services.yml
+    #config.yml
     imports:
         - { resource: "@OpenviewLoggerBundle/Resources/config/services.yml" }
 
